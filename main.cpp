@@ -1,5 +1,6 @@
 #include <iostream>
 #include <conio.h>
+#include <Windows.h>
 
 using namespace std;
 
@@ -7,6 +8,10 @@ void Input();
 void Process();
 void Draw();
 void MovePlayer(int XDirection, int YDirection);
+
+bool IsGoal();
+
+void ChangeColor(int Color);
 
 //1. 지도를 초기화 한다.
 int Map[10][10] =
@@ -19,7 +24,7 @@ int Map[10][10] =
 	{1,0,0,0,0,0,0,0,0,1},
 	{1,0,0,0,1,0,0,1,0,1},
 	{1,0,0,0,1,0,0,1,0,1},
-	{1,0,0,0,1,0,0,1,0,1},
+	{1,0,0,0,1,0,0,1,9,1},
 	{1,1,1,1,1,1,1,1,1,1}
 };
 
@@ -93,6 +98,12 @@ void Process()
 			break;
 		}
 	}
+
+	if (IsGoal())
+	{
+		bIsRunning = false;
+	}
+
 }
 
 void Draw()
@@ -106,7 +117,10 @@ void Draw()
 		{
 			if (PlayerX == X && PlayerY == Y)
 			{
-				cout << "P" << " ";
+				ChangeColor(171);
+				cout << "P";
+				ChangeColor(7);
+				cout << " ";
 			}
 			else if (Map[Y][X] == 0)
 			{
@@ -115,6 +129,13 @@ void Draw()
 			else if (Map[Y][X] == 1)
 			{
 				cout << "X" << " ";
+			}
+			else if (Map[Y][X] == 9)
+			{
+				ChangeColor(14);
+				cout << "G";
+				ChangeColor(7);
+				cout << " ";
 			}
 		}
 
@@ -129,10 +150,29 @@ void MovePlayer(int XDirection, int YDirection)
 	int NewPlayerY = PlayerY + YDirection;
 
 	//미리 가봄
-	if (Map[NewPlayerY][NewPlayerX] == 0)
+	if (Map[NewPlayerY][NewPlayerX] == 0 ||
+		Map[NewPlayerY][NewPlayerX] == 9)
 	{
 		//이동
 		PlayerX = NewPlayerX;
 		PlayerY = NewPlayerY;
 	}
+}
+
+bool IsGoal()
+{
+	return Map[PlayerY][PlayerX] == 9 ? true : false;
+
+	//if (Map[PlayerY][PlayerX] == 9)
+	//{
+	//	return true;
+	//}
+
+
+	//return false;
+}
+
+void ChangeColor(int Color)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Color);
 }
